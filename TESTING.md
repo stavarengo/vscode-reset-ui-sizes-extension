@@ -9,7 +9,7 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 
 ## Test Scenarios
 
-### Test 1: zoomOnly Mode (Default)
+### Test 1: "zoom" Preset (Default)
 
 **Objective**: Verify that zoom resets work without affecting settings.
 
@@ -24,7 +24,7 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 5. Check the "Reset Sizes" output channel (View > Output, select "Reset Sizes")
 
 **Expected Results**:
-- ✓ Notification appears: "Reset UI zoom, editor font zoom, and terminal font zoom."
+- ✓ Notification appears: "Executed 3 commands."
 - ✓ UI zoom returns to 0 (default)
 - ✓ Editor font zoom returns to default
 - ✓ Terminal font zoom returns to default
@@ -34,9 +34,9 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 
 ---
 
-### Test 2: hardReset Mode with Workspace Settings
+### Test 2: "zoomAndSettings" Preset with Workspace Settings
 
-**Objective**: Verify that hardReset removes size-related settings.
+**Objective**: Verify that zoomAndSettings preset removes size-related settings.
 
 **Steps**:
 1. Launch Extension Development Host (F5)
@@ -48,33 +48,33 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
    - Set `window.zoomLevel` to 1
 3. Change extension configuration:
    - Open Settings > Extensions > Reset Sizes
-   - Change `resetSizes.mode` to `hardReset`
-   - Verify `resetSizes.promptBeforeHardReset` is true
+   - Change `resetSizes.preset` to `zoomAndSettings`
+   - Verify `resetSizes.promptBeforeReset` is true
    - Verify `resetSizes.scopes` includes `workspace`
 4. Perform zoom changes (like Test 1)
 5. Run "Reset All Sizes" command
 6. You should see a confirmation dialog
 
 **Expected Results**:
-- ✓ Confirmation dialog appears with "Hard Reset: Remove size-related settings?"
+- ✓ Confirmation dialog appears with "Reset Settings: Remove custom overrides?"
 - After clicking "Proceed":
   - ✓ UI/editor/terminal zooms are reset
   - ✓ Output channel shows settings being reset
   - ✓ Reload prompt appears
   - ✓ After reload, check workspace settings - size settings should be removed
-  - ✓ Notification shows "Reset zooms and N settings."
+  - ✓ Notification shows "Executed 3 commands, reset N settings."
 
 ---
 
-### Test 3: hardReset Canceled
+### Test 3: Settings Reset Canceled
 
-**Objective**: Verify that canceling hardReset still resets zooms.
+**Objective**: Verify that canceling settings reset still executes commands.
 
 **Steps**:
 1. Launch Extension Development Host (F5)
 2. Set some workspace size settings (editor.fontSize, etc.)
-3. Ensure `resetSizes.mode` is `hardReset`
-4. Ensure `resetSizes.promptBeforeHardReset` is `true`
+3. Ensure `resetSizes.preset` is `zoomAndSettings`
+4. Ensure `resetSizes.promptBeforeReset` is `true`
 5. Perform zoom changes
 6. Run "Reset All Sizes" command
 7. In the confirmation dialog, click "Cancel"
@@ -83,8 +83,8 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 - ✓ Dialog is dismissed
 - ✓ Zooms are still reset (commands are executed before the prompt)
 - ✓ Settings are NOT modified
-- ✓ Output channel shows "Hard reset canceled by user"
-- ✓ Notification shows zoom reset message
+- ✓ Output channel shows "Settings reset canceled by user"
+- ✓ Notification shows command execution message
 - ✓ No reload prompt
 
 ---
@@ -96,7 +96,7 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 **Steps**:
 1. Launch Extension Development Host (F5)
 2. Close any open folders/workspaces (File > Close Folder)
-3. Ensure mode is `zoomOnly`
+3. Ensure preset is `zoom` (default)
 4. Perform UI zoom changes (`Ctrl/Cmd + =`)
 5. Run "Reset All Sizes" command
 
@@ -118,31 +118,32 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 3. Expected: No notification shown, but output channel still logs
 
 **Test 5b: reloadAfter = never**
-1. Set `resetSizes.mode` to `hardReset`
-2. Set `resetSizes.promptBeforeHardReset` to `false`
+1. Set `resetSizes.preset` to `zoomAndSettings`
+2. Set `resetSizes.promptBeforeReset` to `false`
 3. Set `resetSizes.reloadAfter` to `never`
 4. Run "Reset All Sizes"
 5. Expected: Settings are reset, but no reload prompt
 
 **Test 5c: reloadAfter = always**
-1. Set `resetSizes.mode` to `hardReset`
-2. Set `resetSizes.promptBeforeHardReset` to `false`
+1. Set `resetSizes.preset` to `zoomAndSettings`
+2. Set `resetSizes.promptBeforeReset` to `false`
 3. Set `resetSizes.reloadAfter` to `always`
 4. Run "Reset All Sizes"
 5. Expected: Window reloads immediately after reset
 
-**Test 5d: includeWindowZoomPerWindow = true**
-1. Set `resetSizes.mode` to `hardReset`
-2. Set `resetSizes.includeWindowZoomPerWindow` to `true`
-3. Set `window.zoomPerWindow` in settings
+**Test 5d: Custom preset with specific commands**
+1. Set `resetSizes.preset` to `custom`
+2. Set `resetSizes.commands` to `["workbench.action.zoomReset"]` (only one command)
+3. Set `resetSizes.settingsToReset` to `["editor.fontSize"]`
 4. Run "Reset All Sizes"
-5. Expected: `window.zoomPerWindow` is reset along with other settings
+5. Expected: Only UI zoom reset executed, only editor.fontSize setting removed
 
 **Test 5e: Multiple scopes**
-1. Set `resetSizes.scopes` to `["user", "workspace"]`
-2. Set size settings in both user and workspace
-3. Run "Reset All Sizes"
-4. Expected: Settings are reset in both scopes
+1. Set `resetSizes.preset` to `zoomAndSettings`
+2. Set `resetSizes.scopes` to `["user", "workspace"]`
+3. Set size settings in both user and workspace
+4. Run "Reset All Sizes"
+5. Expected: Settings are reset in both scopes
 
 ---
 
@@ -176,7 +177,7 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 
 **Test 7b: Read-only settings** (difficult to test)
 1. In a restricted environment where settings cannot be written
-2. Run "Reset All Sizes" in hardReset mode
+2. Run "Reset All Sizes" with zoomAndSettings preset
 3. Expected: Errors are logged, user is notified, extension doesn't crash
 
 ---
@@ -193,12 +194,13 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 **Expected Results**:
 - ✓ Output channel shows:
   - "Starting Reset All Sizes..."
-  - Mode being used
+  - Preset being used
+  - Number of commands and settings configured
   - Each command execution result
-  - (In hardReset) Each setting being reset with success/fail count
+  - (If settings configured) Each setting being reset with success/fail count
   - Summary with counts
   - "Reset All Sizes completed"
-- ✓ Timestamps and clear formatting
+- ✓ Clear formatting
 - ✓ Useful for debugging
 
 ---
@@ -207,10 +209,11 @@ This guide provides step-by-step instructions for manually testing the Reset Siz
 
 The extension passes all tests when:
 
-- ✅ Running "Reset All Sizes" resets UI zoom, editor font zoom, terminal font zoom
-- ✅ zoomOnly mode does NOT alter fontSize settings
-- ✅ hardReset mode removes overrides for the specified settings
-- ✅ User receives confirmation before hard reset (unless disabled)
+- ✅ Running "Reset All Sizes" executes the configured commands (default: 3 zoom resets)
+- ✅ "zoom" preset does NOT alter fontSize settings
+- ✅ "zoomAndSettings" preset removes overrides for the specified settings
+- ✅ "custom" preset allows users to define their own command and settings lists
+- ✅ User receives confirmation before settings reset (unless disabled)
 - ✅ Reload prompt appears when settings change (unless disabled)
 - ✅ Works with and without workspace open
 - ✅ Handles errors gracefully without crashing
