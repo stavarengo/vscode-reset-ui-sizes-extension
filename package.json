@@ -1,31 +1,92 @@
 {
   "name": "reset-sizes-extension",
-  "displayName": "Reset Sizes Extension",
-  "description": "An extension to reset all sizes in the application.",
-  "version": "1.0.0",
-  "publisher": "your-name",
-  "engines": {
-    "vscode": "^1.50.0"
+  "displayName": "Reset Sizes",
+  "description": "Reset all size-related changes (UI zoom, editor font zoom, terminal font zoom, and optionally size-related settings) back to defaults.",
+  "version": "0.1.0",
+  "publisher": "stavarengo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stavarengo/vscode-reset-ui-sizes-extension"
   },
-  "activationEvents": [
-    "onCommand:resetSizes.resetAllSizes"
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
   ],
-  "main": "./src/extension.js",
+  "activationEvents": [
+    "onCommand:resetSizes.resetAll"
+  ],
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "resetSizes.resetAllSizes",
+        "command": "resetSizes.resetAll",
         "title": "Reset All Sizes"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Reset Sizes",
+      "properties": {
+        "resetSizes.mode": {
+          "type": "string",
+          "enum": ["zoomOnly", "hardReset"],
+          "default": "zoomOnly",
+          "description": "Reset mode: 'zoomOnly' resets zoom behaviors only, 'hardReset' also removes size-related settings overrides."
+        },
+        "resetSizes.scopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["user", "workspace", "workspaceFolder"]
+          },
+          "default": ["workspace"],
+          "description": "Configuration scopes to apply hard reset (only used in hardReset mode)."
+        },
+        "resetSizes.includeWindowZoomPerWindow": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to reset window.zoomPerWindow setting in hard reset mode."
+        },
+        "resetSizes.promptBeforeHardReset": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show confirmation dialog before applying hard reset."
+        },
+        "resetSizes.reloadAfter": {
+          "type": "string",
+          "enum": ["never", "prompt", "always"],
+          "default": "prompt",
+          "description": "When to reload window after reset: never, prompt user, or always."
+        },
+        "resetSizes.showSummaryNotification": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notification with summary of reset actions."
+        }
+      }
+    }
   },
   "scripts": {
-    "vscode:prepublish": "webpack --mode production"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./dist/test/runTest.js",
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
-    "typescript": "^4.0.0",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0"
+    "@types/node": "^18.x",
+    "@types/vscode": "^1.74.0",
+    "@types/mocha": "^10.0.6",
+    "@types/glob": "^8.1.0",
+    "@vscode/test-electron": "^2.3.9",
+    "typescript": "^5.3.3",
+    "mocha": "^10.2.0",
+    "glob": "^10.3.10",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1"
   },
   "dependencies": {}
 }
