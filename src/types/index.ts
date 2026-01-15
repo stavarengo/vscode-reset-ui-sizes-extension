@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
 
 /**
- * Reset mode: 'zoomOnly' resets zoom behaviors only,
- * 'hardReset' also removes size-related settings overrides.
+ * Preset configuration: quick shortcuts for common command/settings combinations.
  */
-export type ResetMode = 'zoomOnly' | 'hardReset';
+export type Preset = 'zoom' | 'zoomAndSettings' | 'custom';
 
 /**
- * Configuration scope to apply hard reset.
+ * Configuration scope to apply settings reset.
  */
 export type ResetScope = 'user' | 'workspace' | 'workspaceFolder';
 
@@ -20,14 +19,16 @@ export type ReloadAfterOption = 'never' | 'prompt' | 'always';
  * Extension configuration interface.
  */
 export interface ExtensionConfig {
-	/** Reset mode */
-	mode: ResetMode;
-	/** Configuration scopes to apply hard reset (only used in hardReset mode) */
+	/** Preset configuration */
+	preset: Preset;
+	/** VS Code command IDs to execute */
+	commands: string[];
+	/** Setting keys to reset (remove custom values) */
+	settingsToReset: string[];
+	/** Configuration scopes to apply settings reset */
 	scopes: ResetScope[];
-	/** Whether to reset window.zoomPerWindow setting in hard reset mode */
-	includeWindowZoomPerWindow: boolean;
-	/** Show confirmation dialog before applying hard reset */
-	promptBeforeHardReset: boolean;
+	/** Show confirmation dialog before removing settings */
+	promptBeforeReset: boolean;
 	/** When to reload window after reset */
 	reloadAfter: ReloadAfterOption;
 	/** Show notification with summary of reset actions */
@@ -58,8 +59,6 @@ export interface ResetAllSizesResult {
 	failedCommands: Array<{ id: string; error: string }>;
 	/** List of settings that were updated */
 	updatedSettings: SettingChange[];
-	/** The reset mode that was used */
-	mode: ResetMode;
 	/** Timestamp of when the reset was performed */
 	timestamp: Date;
 }

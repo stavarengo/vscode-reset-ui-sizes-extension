@@ -16,10 +16,11 @@ suite('Utility Functions Test Suite', () => {
 			const config = getExtensionConfig();
 
 			assert.ok(config, 'Config should be defined');
-			assert.strictEqual(typeof config.mode, 'string');
+			assert.strictEqual(typeof config.preset, 'string');
+			assert.ok(Array.isArray(config.commands));
+			assert.ok(Array.isArray(config.settingsToReset));
 			assert.ok(Array.isArray(config.scopes));
-			assert.strictEqual(typeof config.includeWindowZoomPerWindow, 'boolean');
-			assert.strictEqual(typeof config.promptBeforeHardReset, 'boolean');
+			assert.strictEqual(typeof config.promptBeforeReset, 'boolean');
 			assert.strictEqual(typeof config.reloadAfter, 'string');
 			assert.strictEqual(typeof config.showSummaryNotification, 'boolean');
 		});
@@ -49,12 +50,12 @@ suite('Utility Functions Test Suite', () => {
 			}
 
 			const result = await updateSetting(
-				'resetSizes.mode',
-				'zoomOnly',
+				'resetSizes.preset',
+				'zoom',
 				vscode.ConfigurationTarget.Workspace
 			);
 
-			assert.strictEqual(result.key, 'resetSizes.mode');
+			assert.strictEqual(result.key, 'resetSizes.preset');
 			assert.strictEqual(result.target, vscode.ConfigurationTarget.Workspace);
 			assert.ok(result.success !== undefined);
 		});
@@ -66,12 +67,12 @@ suite('Utility Functions Test Suite', () => {
 			}
 
 			const result = await updateSetting(
-				'resetSizes.mode',
+				'resetSizes.preset',
 				undefined,
 				vscode.ConfigurationTarget.Workspace
 			);
 
-			assert.strictEqual(result.key, 'resetSizes.mode');
+			assert.strictEqual(result.key, 'resetSizes.preset');
 			assert.strictEqual(result.success, true);
 		});
 	});

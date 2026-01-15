@@ -21,92 +21,59 @@ export async function resetAllSizes(
 	// Step 1: Read extension configuration
 	const config = getExtensionConfig();
 	outputChannel.appendLine('Starting Reset All Sizes...');
-	outputChannel.appendLine(`Mode: ${config.mode}`);
+	outputChannel.appendLine(`Preset: ${config.preset}`);
+	outputChannel.appendLine(`Commands: ${config.commands.length}, Settings: ${config.settingsToReset.length}`);
 
 	// Step 2: Initialize result object
 	const result: ResetAllSizesResult = {
 		executedCommands: [],
 		failedCommands: [],
 		updatedSettings: [],
-		mode: config.mode,
 		timestamp: new Date()
 	};
 
-	// Step 3: Reset UI zoom
-	outputChannel.appendLine('Resetting UI zoom...');
-	const uiZoomSuccess = await executeVSCodeCommand('workbench.action.zoomReset');
-	if (uiZoomSuccess) {
-		result.executedCommands.push('workbench.action.zoomReset');
-		outputChannel.appendLine('✓ UI zoom reset');
+	// Step 3: Execute configured commands
+	if (config.commands.length === 0) {
+		outputChannel.appendLine('No commands configured to execute');
 	} else {
-		result.failedCommands.push({
-			id: 'workbench.action.zoomReset',
-			error: 'Command execution failed'
-		});
-		outputChannel.appendLine('✗ UI zoom reset failed');
+		outputChannel.appendLine(`Executing ${config.commands.length} commands...`);
+		for (const commandId of config.commands) {
+			outputChannel.appendLine(`Executing: ${commandId}`);
+			const success = await executeVSCodeCommand(commandId);
+
+			if (success) {
+				result.executedCommands.push(commandId);
+				outputChannel.appendLine(`✓ ${commandId} succeeded`);
+			} else {
+				result.failedCommands.push({
+					id: commandId,
+					error: 'Command execution failed'
+				});
+				outputChannel.appendLine(`✗ ${commandId} failed`);
+			}
+		}
 	}
 
-	// Step 4: Reset editor font zoom
-	outputChannel.appendLine('Resetting editor font zoom...');
-	const editorZoomSuccess = await executeVSCodeCommand('editor.action.fontZoomReset');
-	if (editorZoomSuccess) {
-		result.executedCommands.push('editor.action.fontZoomReset');
-		outputChannel.appendLine('✓ Editor font zoom reset');
+	// Step 4: Reset configured settings
+	if (config.settingsToReset.length === 0) {
+		outputChannel.appendLine('No settings configured to reset');
 	} else {
-		result.failedCommands.push({
-			id: 'editor.action.fontZoomReset',
-			error: 'Command execution failed'
-		});
-		outputChannel.appendLine('✗ Editor font zoom reset failed');
-	}
+		outputChannel.appendLine(`Resetting ${config.settingsToReset.length} settings...`);
 
-	// Step 5: Reset terminal font zoom
-	outputChannel.appendLine('Resetting terminal font zoom...');
-	const terminalZoomSuccess = await executeVSCodeCommand('workbench.action.terminal.fontZoomReset');
-	if (terminalZoomSuccess) {
-		result.executedCommands.push('workbench.action.terminal.fontZoomReset');
-		outputChannel.appendLine('✓ Terminal font zoom reset');
-	} else {
-		result.failedCommands.push({
-			id: 'workbench.action.terminal.fontZoomReset',
-			error: 'Command execution failed (terminal may not be open)'
-		});
-		outputChannel.appendLine('✓ Terminal font zoom reset (or no terminal)');
-	}
-
-	// Step 6: Hard reset settings (if mode is hardReset)
-	if (config.mode === 'hardReset') {
-		outputChannel.appendLine('Hard reset mode enabled...');
-
-		// Step 6a: Show confirmation dialog if configured
-		let proceedWithHardReset = true;
-		if (config.promptBeforeHardReset) {
+		// Prompt before resetting (if configured)
+		let proceedWithReset = true;
+		if (config.promptBeforeReset) {
 			outputChannel.appendLine('Prompting user for confirmation...');
-			proceedWithHardReset = await showConfirmationDialog(
-				'Hard Reset: Remove size-related settings?',
-				'This will remove overrides for window zoom, editor font size, terminal font size, and related settings from the selected configuration scopes.'
+			proceedWithReset = await showConfirmationDialog(
+				'Reset Settings: Remove custom overrides?',
+				`This will remove your custom values for ${config.settingsToReset.length} settings (${config.settingsToReset.join(', ')}) from the selected configuration scopes. VS Code defaults will be restored.`
 			);
 		}
 
-		if (proceedWithHardReset) {
-			outputChannel.appendLine('Proceeding with hard reset...');
+		if (proceedWithReset) {
+			outputChannel.appendLine('Proceeding with settings reset...');
 
-			// Define size settings to reset
-			const sizeSettings = [
-				'window.zoomLevel',
-				'editor.fontSize',
-				'editor.lineHeight',
-				'terminal.integrated.fontSize',
-				'terminal.integrated.lineHeight'
-			];
-
-			// Conditionally include window.zoomPerWindow
-			if (config.includeWindowZoomPerWindow) {
-				sizeSettings.push('window.zoomPerWindow');
-			}
-
-			// Reset each setting across configured scopes
-			for (const setting of sizeSettings) {
+			for (const setting of config.settingsToReset) {
 				outputChannel.appendLine(`Resetting ${setting}...`);
 				const changes = await updateSettingAcrossScopes(
 					setting,
@@ -120,15 +87,17 @@ export async function resetAllSizes(
 				outputChannel.appendLine(`  ✓ ${successCount} succeeded, ${failCount} failed`);
 			}
 		} else {
-			outputChannel.appendLine('Hard reset canceled by user');
+			outputChannel.appendLine('Settings reset canceled by user');
 		}
 	}
 
-	// Step 7: Show summary notification
+	// Step 5: Show summary notification
 	if (config.showSummaryNotification) {
-		const message = config.mode === 'zoomOnly'
-			? `Reset UI zoom, editor font zoom, and terminal font zoom.`
-			: `Reset zooms and ${result.updatedSettings.filter(s => s.success).length} settings.`;
+		const commandCount = result.executedCommands.length;
+		const settingCount = result.updatedSettings.filter(s => s.success).length;
+		const message = settingCount > 0
+			? `Executed ${commandCount} commands, reset ${settingCount} settings.`
+			: `Executed ${commandCount} commands.`;
 
 		vscode.window.showInformationMessage(message);
 		outputChannel.appendLine(`Summary: ${message}`);

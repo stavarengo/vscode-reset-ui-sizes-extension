@@ -2,7 +2,7 @@
   "name": "reset-sizes-extension",
   "displayName": "Reset Sizes",
   "description": "Reset all size-related changes (UI zoom, editor font zoom, terminal font zoom, and optionally size-related settings) back to defaults.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "stavarengo",
   "repository": {
     "type": "git",
@@ -28,15 +28,38 @@
     "configuration": {
       "title": "Reset Sizes",
       "properties": {
-        "resetSizes.mode": {
+        "resetSizes.preset": {
           "type": "string",
-          "enum": ["zoomOnly", "hardReset"],
-          "default": "zoomOnly",
-          "description": "Choose what to reset: 'zoomOnly' resets zoom behaviors only (recommended). 'hardReset' also removes size-related settings (like editor.fontSize) from settings.json, restoring VS Code defaults. Both modes are safe and reversible.",
+          "enum": ["zoom", "zoomAndSettings", "custom"],
+          "default": "zoom",
+          "description": "Preset configuration: 'zoom' resets only zoom commands, 'zoomAndSettings' also removes size settings. Select 'custom' to define your own commands and settings.",
           "enumDescriptions": [
-            "Only reset zoom behaviors (UI zoom, editor font zoom, terminal font zoom). Your fontSize settings remain untouched.",
-            "Reset zoom behaviors AND remove custom size settings, restoring VS Code defaults. Safe - just cleans up settings.json."
+            "Reset zoom behaviors only (UI zoom, editor font zoom, terminal font zoom). Safe and quick.",
+            "Reset zoom behaviors AND remove custom size settings like editor.fontSize, terminal.integrated.fontSize. Restores defaults.",
+            "Define your own custom command list and settings to reset. Fully flexible."
           ]
+        },
+        "resetSizes.commands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "workbench.action.zoomReset",
+            "editor.action.fontZoomReset",
+            "workbench.action.terminal.fontZoomReset"
+          ],
+          "description": "VS Code command IDs to execute when Reset All Sizes is run. Change preset to 'custom' to modify this list.",
+          "markdownDescription": "VS Code command IDs to execute when **Reset All Sizes** is run. Examples:\n- `workbench.action.zoomReset` - Reset UI zoom\n- `editor.action.fontZoomReset` - Reset editor font zoom\n- `workbench.action.terminal.fontZoomReset` - Reset terminal font zoom\n\nChange preset to `custom` to modify this list."
+        },
+        "resetSizes.settingsToReset": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Setting keys to reset (remove custom values) when Reset All Sizes is run. Change preset to 'custom' to modify this list.",
+          "markdownDescription": "Setting keys to reset (remove custom values) when **Reset All Sizes** is run. Examples:\n- `editor.fontSize`\n- `editor.lineHeight`\n- `terminal.integrated.fontSize`\n- `window.zoomLevel`\n\nChange preset to `custom` to modify this list."
         },
         "resetSizes.scopes": {
           "type": "array",
@@ -45,17 +68,12 @@
             "enum": ["user", "workspace", "workspaceFolder"]
           },
           "default": ["workspace"],
-          "description": "Configuration scopes to apply hard reset (only used in hardReset mode)."
+          "description": "Configuration scopes to apply settings reset (only used when settingsToReset is not empty)."
         },
-        "resetSizes.includeWindowZoomPerWindow": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to reset window.zoomPerWindow setting in hard reset mode."
-        },
-        "resetSizes.promptBeforeHardReset": {
+        "resetSizes.promptBeforeReset": {
           "type": "boolean",
           "default": true,
-          "description": "Show confirmation dialog before removing size settings in hardReset mode. Recommended to keep enabled."
+          "description": "Show confirmation dialog before removing settings (only applies if settingsToReset is not empty). Recommended to keep enabled."
         },
         "resetSizes.reloadAfter": {
           "type": "string",

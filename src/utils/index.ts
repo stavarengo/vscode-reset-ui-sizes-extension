@@ -1,5 +1,37 @@
 import * as vscode from 'vscode';
-import { ExtensionConfig, ResetScope, SettingChange } from '../types';
+import { ExtensionConfig, ResetScope, SettingChange, Preset } from '../types';
+
+/**
+ * Preset configurations: predefined command and settings combinations.
+ */
+const PRESET_CONFIGS: Record<Preset, { commands: string[]; settingsToReset: string[] }> = {
+	zoom: {
+		commands: [
+			'workbench.action.zoomReset',
+			'editor.action.fontZoomReset',
+			'workbench.action.terminal.fontZoomReset'
+		],
+		settingsToReset: []
+	},
+	zoomAndSettings: {
+		commands: [
+			'workbench.action.zoomReset',
+			'editor.action.fontZoomReset',
+			'workbench.action.terminal.fontZoomReset'
+		],
+		settingsToReset: [
+			'window.zoomLevel',
+			'editor.fontSize',
+			'editor.lineHeight',
+			'terminal.integrated.fontSize',
+			'terminal.integrated.lineHeight'
+		]
+	},
+	custom: {
+		commands: [],
+		settingsToReset: []
+	}
+};
 
 /**
  * Execute a VS Code command and return whether it succeeded.
@@ -99,11 +131,16 @@ export async function updateSettingAcrossScopes(
 export function getExtensionConfig(): ExtensionConfig {
 	const config = vscode.workspace.getConfiguration('resetSizes');
 
+	const preset = config.get<Preset>('preset', 'zoom');
+	const commands = config.get<string[]>('commands', PRESET_CONFIGS[preset].commands);
+	const settingsToReset = config.get<string[]>('settingsToReset', PRESET_CONFIGS[preset].settingsToReset);
+
 	return {
-		mode: config.get<'zoomOnly' | 'hardReset'>('mode', 'zoomOnly'),
+		preset,
+		commands,
+		settingsToReset,
 		scopes: config.get<ResetScope[]>('scopes', ['workspace']),
-		includeWindowZoomPerWindow: config.get<boolean>('includeWindowZoomPerWindow', false),
-		promptBeforeHardReset: config.get<boolean>('promptBeforeHardReset', true),
+		promptBeforeReset: config.get<boolean>('promptBeforeReset', true),
 		reloadAfter: config.get<'never' | 'prompt' | 'always'>('reloadAfter', 'prompt'),
 		showSummaryNotification: config.get<boolean>('showSummaryNotification', true)
 	};

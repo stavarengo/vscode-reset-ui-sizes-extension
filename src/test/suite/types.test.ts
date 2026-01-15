@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {
-	ResetMode,
+	Preset,
 	ResetScope,
 	ReloadAfterOption,
 	ExtensionConfig,
@@ -10,11 +10,13 @@ import {
 } from '../../types';
 
 suite('Type Definitions Test Suite', () => {
-	test('ResetMode type should accept valid values', () => {
-		const zoomOnly: ResetMode = 'zoomOnly';
-		const hardReset: ResetMode = 'hardReset';
-		assert.strictEqual(zoomOnly, 'zoomOnly');
-		assert.strictEqual(hardReset, 'hardReset');
+	test('Preset type should accept valid values', () => {
+		const zoom: Preset = 'zoom';
+		const zoomAndSettings: Preset = 'zoomAndSettings';
+		const custom: Preset = 'custom';
+		assert.strictEqual(zoom, 'zoom');
+		assert.strictEqual(zoomAndSettings, 'zoomAndSettings');
+		assert.strictEqual(custom, 'custom');
 	});
 
 	test('ResetScope type should accept valid values', () => {
@@ -37,18 +39,20 @@ suite('Type Definitions Test Suite', () => {
 
 	test('ExtensionConfig should have all required properties', () => {
 		const config: ExtensionConfig = {
-			mode: 'zoomOnly',
+			preset: 'zoom',
+			commands: ['workbench.action.zoomReset', 'editor.action.fontZoomReset'],
+			settingsToReset: [],
 			scopes: ['workspace'],
-			includeWindowZoomPerWindow: false,
-			promptBeforeHardReset: true,
+			promptBeforeReset: true,
 			reloadAfter: 'prompt',
 			showSummaryNotification: true
 		};
 
-		assert.strictEqual(config.mode, 'zoomOnly');
+		assert.strictEqual(config.preset, 'zoom');
+		assert.deepStrictEqual(config.commands, ['workbench.action.zoomReset', 'editor.action.fontZoomReset']);
+		assert.deepStrictEqual(config.settingsToReset, []);
 		assert.deepStrictEqual(config.scopes, ['workspace']);
-		assert.strictEqual(config.includeWindowZoomPerWindow, false);
-		assert.strictEqual(config.promptBeforeHardReset, true);
+		assert.strictEqual(config.promptBeforeReset, true);
 		assert.strictEqual(config.reloadAfter, 'prompt');
 		assert.strictEqual(config.showSummaryNotification, true);
 	});
@@ -87,7 +91,6 @@ suite('Type Definitions Test Suite', () => {
 					success: true
 				}
 			],
-			mode: 'hardReset',
 			timestamp: new Date()
 		};
 
@@ -95,7 +98,6 @@ suite('Type Definitions Test Suite', () => {
 		assert.strictEqual(result.failedCommands.length, 1);
 		assert.strictEqual(result.failedCommands[0].id, 'workbench.action.terminal.fontZoomReset');
 		assert.strictEqual(result.updatedSettings.length, 1);
-		assert.strictEqual(result.mode, 'hardReset');
 		assert.ok(result.timestamp instanceof Date);
 	});
 });
