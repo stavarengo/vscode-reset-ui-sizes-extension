@@ -32,7 +32,11 @@
           "type": "string",
           "enum": ["zoomOnly", "hardReset"],
           "default": "zoomOnly",
-          "description": "Reset mode: 'zoomOnly' resets zoom behaviors only, 'hardReset' also removes size-related settings overrides."
+          "description": "Choose what to reset: 'zoomOnly' resets zoom behaviors only (recommended). 'hardReset' also removes size-related settings (like editor.fontSize) from settings.json, restoring VS Code defaults. Both modes are safe and reversible.",
+          "enumDescriptions": [
+            "Only reset zoom behaviors (UI zoom, editor font zoom, terminal font zoom). Your fontSize settings remain untouched.",
+            "Reset zoom behaviors AND remove custom size settings, restoring VS Code defaults. Safe - just cleans up settings.json."
+          ]
         },
         "resetSizes.scopes": {
           "type": "array",
@@ -51,7 +55,7 @@
         "resetSizes.promptBeforeHardReset": {
           "type": "boolean",
           "default": true,
-          "description": "Show confirmation dialog before applying hard reset."
+          "description": "Show confirmation dialog before removing size settings in hardReset mode. Recommended to keep enabled."
         },
         "resetSizes.reloadAfter": {
           "type": "string",
