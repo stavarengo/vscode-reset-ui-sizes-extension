@@ -95,7 +95,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
     "test": "node ./dist/test/runTest.js",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "package": "vsce package --out extension.vsix",
+    "install-local": "npm run compile && npm run package && code --install-extension extension.vsix --force"
   },
   "devDependencies": {
     "@types/node": "^18.x",
@@ -103,6 +105,7 @@
     "@types/mocha": "^10.0.6",
     "@types/glob": "^8.1.0",
     "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.22.0",
     "typescript": "^5.3.3",
     "mocha": "^10.2.0",
     "glob": "^10.3.10",
