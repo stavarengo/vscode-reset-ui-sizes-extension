@@ -1,0 +1,31 @@
+{
+  "name": "reset-sizes-extension",
+  "displayName": "Reset Sizes Extension",
+  "description": "An extension to reset all sizes in the application.",
+  "version": "1.0.0",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "activationEvents": [
+    "onCommand:resetSizes.resetAllSizes"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "resetSizes.resetAllSizes",
+        "title": "Reset All Sizes"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0"
+  },
+  "dependencies": {}
+}
