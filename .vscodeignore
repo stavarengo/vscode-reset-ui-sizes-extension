@@ -1,0 +1,29 @@
+# Build artifacts
+node_modules/
+src/
+tsconfig.json
+.vscode-test/
+*.vsix
+
+# Development files
+.vscode/
+.claude/
+test-workspace/
+docs/
+
+# Git
+.git/
+.gitignore
+
+# Tests
+**/test/**
+**/*.test.*
+
+# Source maps
+**/*.map
+
+# Documentation (except README)
+TESTING.md
+
+# Package manager
+package-lock.json
