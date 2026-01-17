@@ -7,7 +7,7 @@ suite('resetAllSizes Command Test Suite', () => {
 	test('should execute and return a result object', async function() {
 		// Create a mock output channel
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext: any = {
+		const mockContext = {
 			subscriptions: [],
 			extensionPath: '',
 			globalState: {
@@ -20,7 +20,7 @@ suite('resetAllSizes Command Test Suite', () => {
 				update: () => Promise.resolve(),
 				keys: () => []
 			}
-		};
+		} as unknown as vscode.ExtensionContext;
 
 		const result = await resetAllSizes(mockContext, outputChannel);
 
@@ -35,12 +35,12 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should execute zoom reset commands with zoom preset', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext: any = {
+		const mockContext = {
 			subscriptions: [],
 			extensionPath: '',
 			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
 			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		};
+		} as unknown as vscode.ExtensionContext;
 
 		// Ensure preset is set to zoom
 		await vscode.workspace.getConfiguration('resetSizes').update('preset', 'zoom', vscode.ConfigurationTarget.Global);
@@ -67,12 +67,12 @@ suite('resetAllSizes Command Test Suite', () => {
 		}
 
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext: any = {
+		const mockContext = {
 			subscriptions: [],
 			extensionPath: '',
 			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
 			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		};
+		} as unknown as vscode.ExtensionContext;
 
 		// Set configuration for zoomAndSettings preset
 		const config = vscode.workspace.getConfiguration('resetSizes');
@@ -99,12 +99,12 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should handle errors gracefully', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext: any = {
+		const mockContext = {
 			subscriptions: [],
 			extensionPath: '',
 			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
 			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		};
+		} as unknown as vscode.ExtensionContext;
 
 		// This should not throw even if some commands fail
 		const result = await resetAllSizes(mockContext, outputChannel);
@@ -118,12 +118,12 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should include timestamp in result', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext: any = {
+		const mockContext = {
 			subscriptions: [],
 			extensionPath: '',
 			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
 			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		};
+		} as unknown as vscode.ExtensionContext;
 
 		const before = new Date();
 		const result = await resetAllSizes(mockContext, outputChannel);

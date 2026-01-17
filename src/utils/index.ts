@@ -58,9 +58,9 @@ export async function executeVSCodeCommand(commandId: string): Promise<boolean> 
  */
 export async function updateSetting(
 	key: string,
-	value: any,
+	value: unknown,
 	target: vscode.ConfigurationTarget,
-	workspaceFolder?: vscode.WorkspaceFolder
+	_workspaceFolder?: vscode.WorkspaceFolder // TODO: US-004 will fix this unused parameter
 ): Promise<SettingChange> {
 	try {
 		const config = vscode.workspace.getConfiguration();
