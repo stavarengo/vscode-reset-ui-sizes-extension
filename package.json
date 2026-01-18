@@ -14,6 +14,13 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "reset",
+    "zoom",
+    "font size",
+    "ui",
+    "layout"
+  ],
   "icon": "images/icon.png",
   "activationEvents": [
     "onCommand:resetSizes.resetAll"

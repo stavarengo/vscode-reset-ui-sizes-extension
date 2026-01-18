@@ -153,3 +153,13 @@ Commit: e10c28a
   - VS Code extension icons should be added to package.json as top-level "icon" field with relative path
 ---
 
+## 2026-01-19 - US-014
+Commit: e5861c9
+- **What was implemented**: Added marketplace keywords to package.json for better extension discoverability
+- **Files changed**:
+  - `package.json` - added keywords array with 5 terms: reset, zoom, font size, ui, layout
+  - `docs/ai/ralph/prd.json` - marked US-014 as passes: true
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
