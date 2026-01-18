@@ -94,3 +94,12 @@ Commit: 5641f63
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-008
+Commit: 84cc3fc
+- **What was implemented**: Removed redundant outputChannel.dispose() call from deactivate()
+- **Files changed**:
+  - `src/extension.ts` - removed manual dispose call, kept comment explaining automatic disposal via context.subscriptions
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
