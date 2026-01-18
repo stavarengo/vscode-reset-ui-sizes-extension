@@ -88,16 +88,19 @@ suite('Utility Functions Test Suite', () => {
 	});
 
 	suite('executeVSCodeCommand', () => {
-		test('should return true for valid commands', async () => {
+		test('should return success for valid commands', async () => {
 			// Using a safe command that exists in VS Code and won't disrupt the test environment
 			const result = await executeVSCodeCommand('workbench.action.showCommands');
-			// This command should succeed and return true
-			assert.strictEqual(result, true);
+			// This command should succeed
+			assert.strictEqual(result.success, true);
+			assert.strictEqual(result.error, undefined);
 		});
 
-		test('should return false for invalid commands', async () => {
+		test('should return failure with error message for invalid commands', async () => {
 			const result = await executeVSCodeCommand('invalid.command.that.does.not.exist');
-			assert.strictEqual(result, false);
+			assert.strictEqual(result.success, false);
+			assert.ok(result.error, 'Expected error message to be defined');
+			assert.ok(result.error.length > 0, 'Expected non-empty error message');
 		});
 	});
 

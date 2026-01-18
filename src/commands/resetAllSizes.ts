@@ -37,17 +37,18 @@ export async function resetAllSizes(
 		outputChannel.appendLine(`Executing ${config.commands.length} commands...`);
 		for (const commandId of config.commands) {
 			outputChannel.appendLine(`Executing: ${commandId}`);
-			const success = await executeVSCodeCommand(commandId);
+			const commandResult = await executeVSCodeCommand(commandId);
 
-			if (success) {
+			if (commandResult.success) {
 				result.executedCommands.push(commandId);
 				outputChannel.appendLine(`✓ ${commandId} succeeded`);
 			} else {
+				const errorMessage = commandResult.error || 'Unknown error';
 				result.failedCommands.push({
 					id: commandId,
-					error: 'Command execution failed'
+					error: errorMessage
 				});
-				outputChannel.appendLine(`✗ ${commandId} failed`);
+				outputChannel.appendLine(`✗ ${commandId} failed: ${errorMessage}`);
 			}
 		}
 	}

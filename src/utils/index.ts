@@ -35,17 +35,30 @@ export const PRESET_CONFIGS: Record<Preset, { commands: string[]; settingsToRese
 };
 
 /**
- * Execute a VS Code command and return whether it succeeded.
- * @param commandId The command ID to execute
- * @returns true if command executed successfully, false otherwise
+ * Result of executing a VS Code command.
  */
-export async function executeVSCodeCommand(commandId: string): Promise<boolean> {
+export interface CommandResult {
+	/** Whether the command executed successfully */
+	success: boolean;
+	/** Error message if the command failed */
+	error?: string;
+}
+
+/**
+ * Execute a VS Code command and return result with error details.
+ * @param commandId The command ID to execute
+ * @returns Object with success status and optional error message
+ */
+export async function executeVSCodeCommand(commandId: string): Promise<CommandResult> {
 	try {
 		await vscode.commands.executeCommand(commandId);
-		return true;
+		return { success: true };
 	} catch (error) {
 		// Command may not exist or may fail (e.g., terminal not open)
-		return false;
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : String(error)
+		};
 	}
 }
 
