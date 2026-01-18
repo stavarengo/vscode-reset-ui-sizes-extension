@@ -10,6 +10,7 @@ Started: 2026-01-17
 - Prefix unused parameters with `_` to satisfy ESLint `no-unused-vars` rule
 - VS Code settings use `unknown` type since they can be any value
 - ESLint is configured with `@typescript-eslint/parser` and `@typescript-eslint/recommended`
+- For preset-based configs, DON'T use `default` in package.json - use `config.get(key, fallback)` so presets work correctly
 
 ---
 
@@ -33,5 +34,18 @@ Commit: b94d8e0
 - **Learnings for future iterations:**
   - `workbench.action.showCommands` is a safe VS Code command for testing executeVSCodeCommand()
   - The VS Code test framework may have issues in headless/CI environments (bad option errors for --no-sandbox etc.) - this is an infrastructure issue, not code issue
+---
+
+## 2026-01-18 - US-003
+Commit: 353b59f
+- **What was implemented**: Fixed preset system so changing presets applies the correct default commands and settings
+- **Files changed**:
+  - `package.json` - removed `default` arrays for commands and settingsToReset settings
+  - `src/utils/index.ts` - exported PRESET_CONFIGS for testing
+  - `src/test/suite/utils.test.ts` - added test verifying preset switching applies correct defaults
+- **Learnings for future iterations:**
+  - When VS Code config has `default` in package.json, `config.get(key, fallback)` returns the package.json default, NOT the fallback
+  - To have dynamic defaults based on another setting (like preset), omit `default` from package.json entirely
+  - Use `config.inspect()` to distinguish between user-set values and defaults
 ---
 
