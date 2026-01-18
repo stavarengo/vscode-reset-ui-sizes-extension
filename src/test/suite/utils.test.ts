@@ -135,6 +135,35 @@ suite('Utility Functions Test Suite', () => {
 			assert.strictEqual(result.key, 'resetSizes.preset');
 			assert.strictEqual(result.success, true);
 		});
+
+		test('should update setting scoped to workspace folder', async function() {
+			if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+				this.skip();
+				return;
+			}
+
+			const folder = vscode.workspace.workspaceFolders[0];
+
+			// Update setting at WorkspaceFolder scope with the folder provided
+			const result = await updateSetting(
+				'editor.tabSize',
+				4,
+				vscode.ConfigurationTarget.WorkspaceFolder,
+				folder
+			);
+
+			assert.strictEqual(result.key, 'editor.tabSize');
+			assert.strictEqual(result.target, vscode.ConfigurationTarget.WorkspaceFolder);
+			assert.strictEqual(result.success, true, 'Setting update should succeed');
+
+			// Clean up: reset the setting
+			await updateSetting(
+				'editor.tabSize',
+				undefined,
+				vscode.ConfigurationTarget.WorkspaceFolder,
+				folder
+			);
+		});
 	});
 
 	suite('updateSettingAcrossScopes', () => {

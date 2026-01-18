@@ -61,10 +61,13 @@ export async function updateSetting(
 	key: string,
 	value: unknown,
 	target: vscode.ConfigurationTarget,
-	_workspaceFolder?: vscode.WorkspaceFolder // TODO: US-004 will fix this unused parameter
+	workspaceFolder?: vscode.WorkspaceFolder
 ): Promise<SettingChange> {
 	try {
-		const config = vscode.workspace.getConfiguration();
+		// When targeting WorkspaceFolder, scope configuration to that folder's URI
+		const config = workspaceFolder
+			? vscode.workspace.getConfiguration('', workspaceFolder.uri)
+			: vscode.workspace.getConfiguration();
 		await config.update(key, value, target);
 
 		return {
