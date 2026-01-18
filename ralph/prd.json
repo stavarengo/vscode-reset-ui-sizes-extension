@@ -1,0 +1,201 @@
+{
+  "project": "Reset Sizes VS Code Extension",
+  "branchName": "ralph/codebase-fixes",
+  "description": "Fix all bugs, code quality issues, and missing items identified in the codebase analysis report",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add ESLint Configuration",
+      "description": "As a developer, I want ESLint configured so that code quality checks run successfully.",
+      "acceptanceCriteria": [
+        "Create .eslintrc.json in project root with TypeScript support",
+        "Configure @typescript-eslint/parser and @typescript-eslint/eslint-plugin",
+        "npm run lint executes without configuration errors",
+        "Fix or document any lint errors in existing code",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Remove Dangerous Window Reload Test",
+      "description": "As a developer, I want tests that are safe to run so they don't crash the test environment.",
+      "acceptanceCriteria": [
+        "Remove or replace the workbench.action.reloadWindow test in src/test/suite/utils.test.ts:32",
+        "Replace with a safe command test like workbench.action.showCommands",
+        "All tests pass without attempting window reload",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Fix Preset System Configuration Loading",
+      "description": "As a user, I want changing presets to automatically use the preset's default commands and settings so the feature works as documented.",
+      "acceptanceCriteria": [
+        "Remove default values for commands and settingsToReset from package.json contributes.configuration",
+        "Handle all defaults in getExtensionConfig() in src/utils/index.ts using PRESET_CONFIGS",
+        "When preset is zoomAndSettings, settingsToReset uses preset defaults not empty array",
+        "Add test verifying preset change applies correct defaults",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Fix WorkspaceFolder Parameter Usage",
+      "description": "As a user, I want workspace folder-scoped settings reset to work correctly in multi-root workspaces.",
+      "acceptanceCriteria": [
+        "Modify updateSetting() in src/utils/index.ts to use workspaceFolder parameter",
+        "Use vscode.workspace.getConfiguration('', workspaceFolder) when workspaceFolder is provided",
+        "Add test for workspace folder scoped setting updates",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Remove Unused Context Parameter",
+      "description": "As a developer, I want clean function signatures without unused parameters.",
+      "acceptanceCriteria": [
+        "Remove context parameter from resetAllSizes() in src/commands/resetAllSizes.ts",
+        "Update call site in src/extension.ts to not pass context",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Preserve Error Details in Command Execution",
+      "description": "As a developer, I want meaningful error messages so I can debug command failures.",
+      "acceptanceCriteria": [
+        "Modify executeVSCodeCommand() in src/utils/index.ts to return error details",
+        "Change return type from boolean to { success: boolean; error?: string }",
+        "Update src/commands/resetAllSizes.ts to use actual error message instead of generic 'Command execution failed'",
+        "Log errors to output channel",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add Warning for WorkspaceFolder Scope Without Folders",
+      "description": "As a user, I want feedback when my configuration can't be applied so I understand why nothing happened.",
+      "acceptanceCriteria": [
+        "Add warning in src/utils/index.ts resetSetting() when workspaceFolder scope selected but no workspace folders exist",
+        "Log warning message to output channel",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Remove Redundant OutputChannel Dispose",
+      "description": "As a developer, I want clean resource management without redundant disposal calls.",
+      "acceptanceCriteria": [
+        "Remove manual outputChannel.dispose() call in deactivate() at src/extension.ts",
+        "Keep context.subscriptions.push(outputChannel) for automatic disposal",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Fix Step Number Comments",
+      "description": "As a developer, I want accurate code comments so the codebase is easy to understand.",
+      "acceptanceCriteria": [
+        "Fix comment at src/commands/resetAllSizes.ts:106 - renumber step 8 to correct sequential number",
+        "Verify all step comments in the file are sequential (1, 2, 3, 4, 5, 6)",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Fix Documentation - Remove hardReset Reference",
+      "description": "As a user, I want accurate documentation so I understand how to configure the extension.",
+      "acceptanceCriteria": [
+        "Update README.md line 64 to use correct mode name zoomAndSettings instead of hardReset",
+        "Search for any other hardReset references in documentation and fix them",
+        "Verify all preset names in documentation match code"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Strengthen Test Assertions",
+      "description": "As a developer, I want meaningful test assertions so tests actually verify behavior.",
+      "acceptanceCriteria": [
+        "Fix src/test/suite/resetAllSizes.test.ts:86 to verify specific expected commands were executed",
+        "Fix src/test/suite/resetAllSizes.test.ts:90 to use meaningful assertion instead of >= 0",
+        "Review other assertions in test files for similar weak assertions",
+        "All tests pass",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Add CHANGELOG.md",
+      "description": "As a user, I want a changelog so I can see what changed between versions.",
+      "acceptanceCriteria": [
+        "Create CHANGELOG.md in project root",
+        "Follow Keep a Changelog format (keepachangelog.com)",
+        "Document current version 0.0.1 features",
+        "Include Unreleased section for future changes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Add Extension Icon",
+      "description": "As a user, I want the extension to have an icon so it's visually identifiable in the marketplace.",
+      "acceptanceCriteria": [
+        "Create or obtain a 128x128 PNG icon file",
+        "Add icon file to images/icon.png",
+        "Update package.json with icon field pointing to images/icon.png",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Add Marketplace Keywords",
+      "description": "As a user, I want to find this extension when searching relevant terms in the marketplace.",
+      "acceptanceCriteria": [
+        "Add keywords array to package.json",
+        "Include terms: reset, zoom, font size, ui, layout",
+        "Limit to 5 keywords per marketplace recommendation"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
