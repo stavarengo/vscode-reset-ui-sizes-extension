@@ -112,3 +112,12 @@ Commit: f026afe
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-010
+Commit: b564447
+- **What was implemented**: Fixed README.md to use correct preset name 'zoomAndSettings' instead of 'hardReset'
+- **Files changed**:
+  - `README.md` - updated line 64 to reference 'zoomAndSettings' mode
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
