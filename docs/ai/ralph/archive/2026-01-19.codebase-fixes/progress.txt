@@ -1,0 +1,165 @@
+# Ralph Progress Log - Codebase Fixes
+
+Branch: ralph/codebase-fixes
+Started: 2026-01-17
+
+---
+
+## Codebase Patterns
+- Use `as unknown as vscode.ExtensionContext` for test mocks instead of `any` type
+- Prefix unused parameters with `_` to satisfy ESLint `no-unused-vars` rule
+- VS Code settings use `unknown` type since they can be any value
+- ESLint is configured with `@typescript-eslint/parser` and `@typescript-eslint/recommended`
+- For preset-based configs, DON'T use `default` in package.json - use `config.get(key, fallback)` so presets work correctly
+
+---
+
+## 2026-01-17 - US-001
+- **What was implemented**: Added ESLint configuration with TypeScript support
+- **Files changed**:
+  - Created `.eslintrc.json` with parser, plugins, and rules
+  - Fixed `src/test/suite/resetAllSizes.test.ts` - replaced `any` types with proper type casting
+  - Fixed `src/utils/index.ts` - changed `any` to `unknown`, added underscore prefix for unused param
+- **Learnings for future iterations:**
+  - The ESLint dependencies were already installed in package.json, just needed the config file
+  - Mock contexts in tests should use `as unknown as vscode.ExtensionContext` pattern
+  - The `_workspaceFolder` parameter in `updateSetting()` is intentionally unused pending US-004 fix
+---
+
+## 2026-01-18 - US-002
+Commit: b94d8e0
+- **What was implemented**: Replaced dangerous `workbench.action.reloadWindow` command in test with safe `workbench.action.showCommands`
+- **Files changed**:
+  - `src/test/suite/utils.test.ts` - replaced reload command with showCommands, updated assertion to expect `true`
+- **Learnings for future iterations:**
+  - `workbench.action.showCommands` is a safe VS Code command for testing executeVSCodeCommand()
+  - The VS Code test framework may have issues in headless/CI environments (bad option errors for --no-sandbox etc.) - this is an infrastructure issue, not code issue
+---
+
+## 2026-01-18 - US-003
+Commit: 353b59f
+- **What was implemented**: Fixed preset system so changing presets applies the correct default commands and settings
+- **Files changed**:
+  - `package.json` - removed `default` arrays for commands and settingsToReset settings
+  - `src/utils/index.ts` - exported PRESET_CONFIGS for testing
+  - `src/test/suite/utils.test.ts` - added test verifying preset switching applies correct defaults
+- **Learnings for future iterations:**
+  - When VS Code config has `default` in package.json, `config.get(key, fallback)` returns the package.json default, NOT the fallback
+  - To have dynamic defaults based on another setting (like preset), omit `default` from package.json entirely
+  - Use `config.inspect()` to distinguish between user-set values and defaults
+---
+
+## 2026-01-18 - US-004
+Commit: b0786ba
+- **What was implemented**: Fixed updateSetting() to properly use workspaceFolder parameter for multi-root workspace support
+- **Files changed**:
+  - `src/utils/index.ts` - use workspaceFolder.uri to scope getConfiguration() when updating WorkspaceFolder-level settings
+  - `src/test/suite/utils.test.ts` - added test for workspace folder scoped setting updates
+- **Learnings for future iterations:**
+  - To update settings at WorkspaceFolder scope, use `vscode.workspace.getConfiguration('', workspaceFolder.uri)` to get a configuration object scoped to that folder
+  - The first empty string param '' in getConfiguration means "get all configuration sections"
+---
+
+## 2026-01-18 - US-005
+Commit: 71d3eac
+- **What was implemented**: Removed unused `context` parameter from `resetAllSizes()` function
+- **Files changed**:
+  - `src/commands/resetAllSizes.ts` - removed context parameter and updated JSDoc
+  - `src/extension.ts` - updated call site to not pass context
+  - `src/test/suite/resetAllSizes.test.ts` - removed all mockContext declarations and updated calls
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-006
+Commit: f4c6808
+- **What was implemented**: Changed executeVSCodeCommand() to return error details instead of just boolean
+- **Files changed**:
+  - `src/utils/index.ts` - added CommandResult interface, updated executeVSCodeCommand() return type
+  - `src/commands/resetAllSizes.ts` - use actual error message from commandResult.error
+  - `src/test/suite/utils.test.ts` - updated tests to check new return type structure
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-007
+Commit: 5641f63
+- **What was implemented**: Added warning when workspaceFolder scope is selected but no workspace folders exist
+- **Files changed**:
+  - `src/types/index.ts` - added UpdateSettingsResult interface with changes and warnings arrays
+  - `src/utils/index.ts` - modified updateSettingAcrossScopes() to return warnings when workspaceFolder scope has no folders
+  - `src/commands/resetAllSizes.ts` - log warnings to output channel
+  - `src/test/suite/utils.test.ts` - updated tests for new return type, added test for warning scenario
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-008
+Commit: 84cc3fc
+- **What was implemented**: Removed redundant outputChannel.dispose() call from deactivate()
+- **Files changed**:
+  - `src/extension.ts` - removed manual dispose call, kept comment explaining automatic disposal via context.subscriptions
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-009
+Commit: f026afe
+- **What was implemented**: Fixed step number comment in resetAllSizes.ts - changed "Step 8" to "Step 6" for sequential numbering
+- **Files changed**:
+  - `src/commands/resetAllSizes.ts` - fixed step comment numbering (1, 2, 3, 4, 5, 6)
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-010
+Commit: b564447
+- **What was implemented**: Fixed README.md to use correct preset name 'zoomAndSettings' instead of 'hardReset'
+- **Files changed**:
+  - `README.md` - updated line 64 to reference 'zoomAndSettings' mode
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-011
+Commit: 09f282e
+- **What was implemented**: Strengthened weak test assertions in both resetAllSizes.test.ts and utils.test.ts
+- **Files changed**:
+  - `src/test/suite/resetAllSizes.test.ts` - replaced weak assertions with specific command/settings verification using PRESET_CONFIGS
+  - `src/test/suite/utils.test.ts` - replaced `!== undefined` checks with `strictEqual(result.success, true)`
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-18 - US-012
+Commit: 017cee7
+- **What was implemented**: Created CHANGELOG.md following Keep a Changelog format
+- **Files changed**:
+  - `CHANGELOG.md` - created with Unreleased section and v1.0.0 initial release documentation
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
+## 2026-01-19 - US-013
+Commit: e10c28a
+- **What was implemented**: Added 128x128 PNG extension icon and updated package.json
+- **Files changed**:
+  - `images/icon.png` - created 128x128 PNG icon with green gradient background
+  - `scripts/generate-icon.js` - created icon generator script with fallback for environments without canvas module
+  - `package.json` - added icon field pointing to images/icon.png
+  - `docs/ai/ralph/prd.json` - marked US-013 as passes: true
+- **Learnings for future iterations:**
+  - The canvas module is not available in this environment, so icon generation used base64-encoded PNG fallback
+  - VS Code extension icons should be added to package.json as top-level "icon" field with relative path
+---
+
+## 2026-01-19 - US-014
+Commit: e5861c9
+- **What was implemented**: Added marketplace keywords to package.json for better extension discoverability
+- **Files changed**:
+  - `package.json` - added keywords array with 5 terms: reset, zoom, font size, ui, layout
+  - `docs/ai/ralph/prd.json` - marked US-014 as passes: true
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
