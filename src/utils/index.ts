@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionConfig, ResetScope, SettingChange, Preset } from '../types';
+import { ExtensionConfig, ResetScope, SettingChange, Preset, UpdateSettingsResult } from '../types';
 
 /**
  * Preset configurations: predefined command and settings combinations.
@@ -103,42 +103,46 @@ export async function updateSetting(
  * @param key Setting key to update
  * @param scopes Scopes to apply the update to
  * @param workspaceFolders Available workspace folders
- * @returns Array of SettingChange results
+ * @returns Object with changes array and warnings array
  */
 export async function updateSettingAcrossScopes(
 	key: string,
 	scopes: ResetScope[],
 	workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined
-): Promise<SettingChange[]> {
-	const results: SettingChange[] = [];
+): Promise<UpdateSettingsResult> {
+	const changes: SettingChange[] = [];
+	const warnings: string[] = [];
 
 	for (const scope of scopes) {
 		switch (scope) {
 			case 'user':
-				results.push(await updateSetting(key, undefined, vscode.ConfigurationTarget.Global));
+				changes.push(await updateSetting(key, undefined, vscode.ConfigurationTarget.Global));
 				break;
 
 			case 'workspace':
-				results.push(await updateSetting(key, undefined, vscode.ConfigurationTarget.Workspace));
+				changes.push(await updateSetting(key, undefined, vscode.ConfigurationTarget.Workspace));
 				break;
 
 			case 'workspaceFolder':
 				if (workspaceFolders && workspaceFolders.length > 0) {
 					// Apply to all workspace folders in multi-root workspace
 					for (const folder of workspaceFolders) {
-						results.push(await updateSetting(
+						changes.push(await updateSetting(
 							key,
 							undefined,
 							vscode.ConfigurationTarget.WorkspaceFolder,
 							folder
 						));
 					}
+				} else {
+					// Warn user that workspaceFolder scope was selected but no folders exist
+					warnings.push(`Cannot reset '${key}' at workspaceFolder scope: no workspace folders are open. Open a folder or use 'user' or 'workspace' scope instead.`);
 				}
 				break;
 		}
 	}
 
-	return results;
+	return { changes, warnings };
 }
 
 /**

@@ -62,3 +62,13 @@ export interface ResetAllSizesResult {
 	/** Timestamp of when the reset was performed */
 	timestamp: Date;
 }
+
+/**
+ * Result of updating settings across scopes.
+ */
+export interface UpdateSettingsResult {
+	/** List of setting changes */
+	changes: SettingChange[];
+	/** Warning messages (e.g., workspaceFolder scope with no folders) */
+	warnings: string[];
+}

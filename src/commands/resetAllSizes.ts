@@ -74,12 +74,17 @@ export async function resetAllSizes(
 
 			for (const setting of config.settingsToReset) {
 				outputChannel.appendLine(`Resetting ${setting}...`);
-				const changes = await updateSettingAcrossScopes(
+				const { changes, warnings } = await updateSettingAcrossScopes(
 					setting,
 					config.scopes,
 					vscode.workspace.workspaceFolders
 				);
 				result.updatedSettings.push(...changes);
+
+				// Log any warnings (e.g., workspaceFolder scope with no folders)
+				for (const warning of warnings) {
+					outputChannel.appendLine(`⚠ Warning: ${warning}`);
+				}
 
 				const successCount = changes.filter(c => c.success).length;
 				const failCount = changes.length - successCount;

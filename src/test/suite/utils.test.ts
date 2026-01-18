@@ -176,28 +176,45 @@ suite('Utility Functions Test Suite', () => {
 				return;
 			}
 
-			const results = await updateSettingAcrossScopes(
+			const { changes, warnings } = await updateSettingAcrossScopes(
 				'editor.fontSize',
 				['workspace'],
 				vscode.workspace.workspaceFolders
 			);
 
-			assert.ok(Array.isArray(results));
-			assert.ok(results.length >= 1);
-			results.forEach(result => {
+			assert.ok(Array.isArray(changes));
+			assert.ok(changes.length >= 1);
+			changes.forEach(result => {
 				assert.strictEqual(result.key, 'editor.fontSize');
 				assert.ok(result.success !== undefined);
 			});
+			assert.ok(Array.isArray(warnings));
 		});
 
 		test('should handle no workspace', async () => {
-			const results = await updateSettingAcrossScopes(
+			const { changes, warnings } = await updateSettingAcrossScopes(
 				'editor.fontSize',
 				['user'],
 				undefined
 			);
 
-			assert.ok(Array.isArray(results));
+			assert.ok(Array.isArray(changes));
+			assert.ok(Array.isArray(warnings));
+		});
+
+		test('should return warning when workspaceFolder scope has no folders', async () => {
+			const { changes, warnings } = await updateSettingAcrossScopes(
+				'editor.fontSize',
+				['workspaceFolder'],
+				undefined // No workspace folders
+			);
+
+			assert.ok(Array.isArray(changes));
+			assert.strictEqual(changes.length, 0, 'No changes should be made without workspace folders');
+			assert.ok(Array.isArray(warnings));
+			assert.strictEqual(warnings.length, 1, 'Should have one warning');
+			assert.ok(warnings[0].includes('workspaceFolder'), 'Warning should mention workspaceFolder scope');
+			assert.ok(warnings[0].includes('editor.fontSize'), 'Warning should mention the setting key');
 		});
 	});
 
