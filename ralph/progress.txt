@@ -25,3 +25,13 @@ Started: 2026-01-17
   - The `_workspaceFolder` parameter in `updateSetting()` is intentionally unused pending US-004 fix
 ---
 
+## 2026-01-18 - US-002
+Commit: b94d8e0
+- **What was implemented**: Replaced dangerous `workbench.action.reloadWindow` command in test with safe `workbench.action.showCommands`
+- **Files changed**:
+  - `src/test/suite/utils.test.ts` - replaced reload command with showCommands, updated assertion to expect `true`
+- **Learnings for future iterations:**
+  - `workbench.action.showCommands` is a safe VS Code command for testing executeVSCodeCommand()
+  - The VS Code test framework may have issues in headless/CI environments (bad option errors for --no-sandbox etc.) - this is an infrastructure issue, not code issue
+---
+
