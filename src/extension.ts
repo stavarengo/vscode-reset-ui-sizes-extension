@@ -24,8 +24,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	// Dispose output channel
-	if (outputChannel) {
-		outputChannel.dispose();
-	}
+	// Output channel is automatically disposed via context.subscriptions
 }

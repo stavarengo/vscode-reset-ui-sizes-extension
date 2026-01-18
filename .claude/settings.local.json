@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(npm run compile:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(ralph-prd-creator)",
+      "Skill(ralph-prd-creator:*)",
+      "Skill(ralph-prd-converter)",
+      "Skill(ralph-prd-converter:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm test:*)"
+    ]
+  }
+}
