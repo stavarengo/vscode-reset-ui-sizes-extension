@@ -1,5 +1,6 @@
 {
   "project": "Reset Sizes VS Code Extension",
+  "prd": "docs/ai/ralph/tasks/prd.2025-01-17.codebase-fixes.md",
   "branchName": "ralph/codebase-fixes",
   "description": "Fix all bugs, code quality issues, and missing items identified in the codebase analysis report",
   "userStories": [
