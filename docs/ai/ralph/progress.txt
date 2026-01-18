@@ -131,3 +131,12 @@ Commit: 09f282e
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-012
+Commit: 017cee7
+- **What was implemented**: Created CHANGELOG.md following Keep a Changelog format
+- **Files changed**:
+  - `CHANGELOG.md` - created with Unreleased section and v1.0.0 initial release documentation
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+

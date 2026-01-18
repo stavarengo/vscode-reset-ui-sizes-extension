@@ -168,7 +168,7 @@
         "Include Unreleased section for future changes"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
