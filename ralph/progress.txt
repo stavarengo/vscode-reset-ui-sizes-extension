@@ -49,3 +49,14 @@ Commit: 353b59f
   - Use `config.inspect()` to distinguish between user-set values and defaults
 ---
 
+## 2026-01-18 - US-004
+Commit: b0786ba
+- **What was implemented**: Fixed updateSetting() to properly use workspaceFolder parameter for multi-root workspace support
+- **Files changed**:
+  - `src/utils/index.ts` - use workspaceFolder.uri to scope getConfiguration() when updating WorkspaceFolder-level settings
+  - `src/test/suite/utils.test.ts` - added test for workspace folder scoped setting updates
+- **Learnings for future iterations:**
+  - To update settings at WorkspaceFolder scope, use `vscode.workspace.getConfiguration('', workspaceFolder.uri)` to get a configuration object scoped to that folder
+  - The first empty string param '' in getConfiguration means "get all configuration sections"
+---
+
