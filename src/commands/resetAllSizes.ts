@@ -107,7 +107,7 @@ export async function resetAllSizes(
 		outputChannel.appendLine(`Summary: ${message}`);
 	}
 
-	// Step 8: Handle reload prompt
+	// Step 6: Handle reload prompt
 	const settingsChanged = result.updatedSettings.some(s => s.success);
 	if (config.reloadAfter === 'always') {
 		outputChannel.appendLine('Auto-reloading window...');
