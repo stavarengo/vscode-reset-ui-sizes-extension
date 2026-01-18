@@ -10,12 +10,10 @@ import {
 
 /**
  * Main command to reset all UI sizes.
- * @param context Extension context
  * @param outputChannel Output channel for logging
  * @returns Result object with details of what was reset
  */
 export async function resetAllSizes(
-	context: vscode.ExtensionContext,
 	outputChannel: vscode.OutputChannel
 ): Promise<ResetAllSizesResult> {
 	// Step 1: Read extension configuration

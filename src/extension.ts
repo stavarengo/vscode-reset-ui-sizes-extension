@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('resetSizes.resetAll', async () => {
 		try {
 			outputChannel.show(true); // Show output channel (preserving focus)
-			await resetAllSizes(context, outputChannel);
+			await resetAllSizes(outputChannel);
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : String(error);
 			outputChannel.appendLine(`Error: ${errorMessage}`);

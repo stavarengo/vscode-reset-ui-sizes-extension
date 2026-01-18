@@ -7,22 +7,8 @@ suite('resetAllSizes Command Test Suite', () => {
 	test('should execute and return a result object', async function() {
 		// Create a mock output channel
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext = {
-			subscriptions: [],
-			extensionPath: '',
-			globalState: {
-				get: () => undefined,
-				update: () => Promise.resolve(),
-				keys: () => []
-			},
-			workspaceState: {
-				get: () => undefined,
-				update: () => Promise.resolve(),
-				keys: () => []
-			}
-		} as unknown as vscode.ExtensionContext;
 
-		const result = await resetAllSizes(mockContext, outputChannel);
+		const result = await resetAllSizes(outputChannel);
 
 		assert.ok(result, 'Result should be defined');
 		assert.ok(Array.isArray(result.executedCommands), 'executedCommands should be an array');
@@ -35,17 +21,11 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should execute zoom reset commands with zoom preset', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext = {
-			subscriptions: [],
-			extensionPath: '',
-			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
-			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		} as unknown as vscode.ExtensionContext;
 
 		// Ensure preset is set to zoom
 		await vscode.workspace.getConfiguration('resetSizes').update('preset', 'zoom', vscode.ConfigurationTarget.Global);
 
-		const result = await resetAllSizes(mockContext, outputChannel);
+		const result = await resetAllSizes(outputChannel);
 
 		// Should have attempted zoom commands
 		const allCommands = [...result.executedCommands, ...result.failedCommands.map(f => f.id)];
@@ -67,12 +47,6 @@ suite('resetAllSizes Command Test Suite', () => {
 		}
 
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext = {
-			subscriptions: [],
-			extensionPath: '',
-			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
-			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		} as unknown as vscode.ExtensionContext;
 
 		// Set configuration for zoomAndSettings preset
 		const config = vscode.workspace.getConfiguration('resetSizes');
@@ -80,7 +54,7 @@ suite('resetAllSizes Command Test Suite', () => {
 		await config.update('promptBeforeReset', false, vscode.ConfigurationTarget.Global);
 		await config.update('scopes', ['workspace'], vscode.ConfigurationTarget.Global);
 
-		const result = await resetAllSizes(mockContext, outputChannel);
+		const result = await resetAllSizes(outputChannel);
 
 		// Should have executed zoom commands
 		assert.ok(result.executedCommands.length > 0, 'Should execute at least some commands');
@@ -99,15 +73,9 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should handle errors gracefully', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext = {
-			subscriptions: [],
-			extensionPath: '',
-			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
-			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		} as unknown as vscode.ExtensionContext;
 
 		// This should not throw even if some commands fail
-		const result = await resetAllSizes(mockContext, outputChannel);
+		const result = await resetAllSizes(outputChannel);
 
 		// Should have a valid result even if some operations failed
 		assert.ok(result);
@@ -118,15 +86,9 @@ suite('resetAllSizes Command Test Suite', () => {
 
 	test('should include timestamp in result', async function() {
 		const outputChannel = vscode.window.createOutputChannel('Test Reset Sizes');
-		const mockContext = {
-			subscriptions: [],
-			extensionPath: '',
-			globalState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] },
-			workspaceState: { get: () => undefined, update: () => Promise.resolve(), keys: () => [] }
-		} as unknown as vscode.ExtensionContext;
 
 		const before = new Date();
-		const result = await resetAllSizes(mockContext, outputChannel);
+		const result = await resetAllSizes(outputChannel);
 		const after = new Date();
 
 		assert.ok(result.timestamp >= before, 'Timestamp should be after test start');
