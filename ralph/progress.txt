@@ -71,3 +71,14 @@ Commit: 71d3eac
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-006
+Commit: f4c6808
+- **What was implemented**: Changed executeVSCodeCommand() to return error details instead of just boolean
+- **Files changed**:
+  - `src/utils/index.ts` - added CommandResult interface, updated executeVSCodeCommand() return type
+  - `src/commands/resetAllSizes.ts` - use actual error message from commandResult.error
+  - `src/test/suite/utils.test.ts` - updated tests to check new return type structure
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
