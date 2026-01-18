@@ -28,11 +28,10 @@ suite('Utility Functions Test Suite', () => {
 
 	suite('executeVSCodeCommand', () => {
 		test('should return true for valid commands', async () => {
-			// Using a command that always exists in VS Code
-			const result = await executeVSCodeCommand('workbench.action.reloadWindow');
-			// This command may or may not succeed depending on the environment,
-			// but it should return a boolean
-			assert.strictEqual(typeof result, 'boolean');
+			// Using a safe command that exists in VS Code and won't disrupt the test environment
+			const result = await executeVSCodeCommand('workbench.action.showCommands');
+			// This command should succeed and return true
+			assert.strictEqual(result, true);
 		});
 
 		test('should return false for invalid commands', async () => {
