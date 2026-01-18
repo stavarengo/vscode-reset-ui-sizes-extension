@@ -82,3 +82,15 @@ Commit: f4c6808
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-007
+Commit: 5641f63
+- **What was implemented**: Added warning when workspaceFolder scope is selected but no workspace folders exist
+- **Files changed**:
+  - `src/types/index.ts` - added UpdateSettingsResult interface with changes and warnings arrays
+  - `src/utils/index.ts` - modified updateSettingAcrossScopes() to return warnings when workspaceFolder scope has no folders
+  - `src/commands/resetAllSizes.ts` - log warnings to output channel
+  - `src/test/suite/utils.test.ts` - updated tests for new return type, added test for warning scenario
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
