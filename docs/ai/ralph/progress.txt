@@ -140,3 +140,16 @@ Commit: 017cee7
   - No significant learnings.
 ---
 
+## 2026-01-19 - US-013
+Commit: 3cd4618
+- **What was implemented**: Added 128x128 PNG extension icon and updated package.json
+- **Files changed**:
+  - `images/icon.png` - created 128x128 PNG icon with green gradient background
+  - `scripts/generate-icon.js` - created icon generator script with fallback for environments without canvas module
+  - `package.json` - added icon field pointing to images/icon.png
+  - `docs/ai/ralph/prd.json` - marked US-013 as passes: true
+- **Learnings for future iterations:**
+  - The canvas module is not available in this environment, so icon generation used base64-encoded PNG fallback
+  - VS Code extension icons should be added to package.json as top-level "icon" field with relative path
+---
+
