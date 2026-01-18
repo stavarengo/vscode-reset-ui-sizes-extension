@@ -121,3 +121,13 @@ Commit: b564447
   - No significant learnings.
 ---
 
+## 2026-01-18 - US-011
+Commit: 09f282e
+- **What was implemented**: Strengthened weak test assertions in both resetAllSizes.test.ts and utils.test.ts
+- **Files changed**:
+  - `src/test/suite/resetAllSizes.test.ts` - replaced weak assertions with specific command/settings verification using PRESET_CONFIGS
+  - `src/test/suite/utils.test.ts` - replaced `!== undefined` checks with `strictEqual(result.success, true)`
+- **Learnings for future iterations:**
+  - No significant learnings.
+---
+
