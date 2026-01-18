@@ -61,7 +61,7 @@ VS Code has two different concepts for text size:
 2. **Font Size**: The `fontSize` setting in settings.json
    - Permanent configuration
    - Persisted in settings files
-   - Only reset in hardReset mode
+   - Only reset in zoomAndSettings mode
 
 ### UI Zoom
 
