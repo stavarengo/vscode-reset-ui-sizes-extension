@@ -6,7 +6,8 @@ import {
 	updateSettingAcrossScopes,
 	getExtensionConfig,
 	showConfirmationDialog,
-	showReloadPrompt
+	showReloadPrompt,
+	PRESET_CONFIGS
 } from '../../utils';
 
 suite('Utility Functions Test Suite', () => {
@@ -23,6 +24,66 @@ suite('Utility Functions Test Suite', () => {
 			assert.strictEqual(typeof config.promptBeforeReset, 'boolean');
 			assert.strictEqual(typeof config.reloadAfter, 'string');
 			assert.strictEqual(typeof config.showSummaryNotification, 'boolean');
+		});
+
+		test('should apply preset defaults when switching presets', async function() {
+			if (!vscode.workspace.workspaceFolders) {
+				this.skip();
+				return;
+			}
+
+			const configApi = vscode.workspace.getConfiguration('resetSizes');
+
+			// Store original values to restore later
+			const originalPreset = configApi.get('preset');
+			const originalCommands = configApi.inspect('commands');
+			const originalSettings = configApi.inspect('settingsToReset');
+
+			try {
+				// Clear any explicit commands/settingsToReset to test preset defaults
+				await configApi.update('commands', undefined, vscode.ConfigurationTarget.Workspace);
+				await configApi.update('settingsToReset', undefined, vscode.ConfigurationTarget.Workspace);
+
+				// Test 'zoom' preset
+				await configApi.update('preset', 'zoom', vscode.ConfigurationTarget.Workspace);
+				let config = getExtensionConfig();
+				assert.deepStrictEqual(config.commands, PRESET_CONFIGS.zoom.commands,
+					'zoom preset should have correct default commands');
+				assert.deepStrictEqual(config.settingsToReset, PRESET_CONFIGS.zoom.settingsToReset,
+					'zoom preset should have empty settingsToReset');
+
+				// Test 'zoomAndSettings' preset
+				await configApi.update('preset', 'zoomAndSettings', vscode.ConfigurationTarget.Workspace);
+				config = getExtensionConfig();
+				assert.deepStrictEqual(config.commands, PRESET_CONFIGS.zoomAndSettings.commands,
+					'zoomAndSettings preset should have correct default commands');
+				assert.deepStrictEqual(config.settingsToReset, PRESET_CONFIGS.zoomAndSettings.settingsToReset,
+					'zoomAndSettings preset should have settings to reset, not empty array');
+				assert.ok(config.settingsToReset.length > 0,
+					'zoomAndSettings settingsToReset should not be empty');
+
+				// Test 'custom' preset
+				await configApi.update('preset', 'custom', vscode.ConfigurationTarget.Workspace);
+				config = getExtensionConfig();
+				assert.deepStrictEqual(config.commands, PRESET_CONFIGS.custom.commands,
+					'custom preset should have empty default commands');
+				assert.deepStrictEqual(config.settingsToReset, PRESET_CONFIGS.custom.settingsToReset,
+					'custom preset should have empty settingsToReset');
+
+			} finally {
+				// Restore original values
+				await configApi.update('preset', originalPreset, vscode.ConfigurationTarget.Workspace);
+				if (originalCommands?.workspaceValue !== undefined) {
+					await configApi.update('commands', originalCommands.workspaceValue, vscode.ConfigurationTarget.Workspace);
+				} else {
+					await configApi.update('commands', undefined, vscode.ConfigurationTarget.Workspace);
+				}
+				if (originalSettings?.workspaceValue !== undefined) {
+					await configApi.update('settingsToReset', originalSettings.workspaceValue, vscode.ConfigurationTarget.Workspace);
+				} else {
+					await configApi.update('settingsToReset', undefined, vscode.ConfigurationTarget.Workspace);
+				}
+			}
 		});
 	});
 

@@ -3,8 +3,9 @@ import { ExtensionConfig, ResetScope, SettingChange, Preset } from '../types';
 
 /**
  * Preset configurations: predefined command and settings combinations.
+ * Exported for testing purposes.
  */
-const PRESET_CONFIGS: Record<Preset, { commands: string[]; settingsToReset: string[] }> = {
+export const PRESET_CONFIGS: Record<Preset, { commands: string[]; settingsToReset: string[] }> = {
 	zoom: {
 		commands: [
 			'workbench.action.zoomReset',
