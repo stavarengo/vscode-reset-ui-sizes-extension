@@ -120,7 +120,7 @@ suite('Utility Functions Test Suite', () => {
 
 			assert.strictEqual(result.key, 'resetSizes.preset');
 			assert.strictEqual(result.target, vscode.ConfigurationTarget.Workspace);
-			assert.ok(result.success !== undefined);
+			assert.strictEqual(result.success, true, 'Setting update should succeed');
 		});
 
 		test('should handle setting reset with undefined value', async function() {
@@ -183,10 +183,11 @@ suite('Utility Functions Test Suite', () => {
 			);
 
 			assert.ok(Array.isArray(changes));
-			assert.ok(changes.length >= 1);
+			assert.ok(changes.length >= 1, 'Should have at least one change');
 			changes.forEach(result => {
 				assert.strictEqual(result.key, 'editor.fontSize');
-				assert.ok(result.success !== undefined);
+				assert.strictEqual(typeof result.success, 'boolean', 'success should be a boolean');
+				assert.strictEqual(result.success, true, 'Setting update should succeed');
 			});
 			assert.ok(Array.isArray(warnings));
 		});

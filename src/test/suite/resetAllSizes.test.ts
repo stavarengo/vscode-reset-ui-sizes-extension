@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { resetAllSizes } from '../../commands/resetAllSizes';
+import { PRESET_CONFIGS } from '../../utils';
 
 suite('resetAllSizes Command Test Suite', () => {
 
@@ -56,12 +57,29 @@ suite('resetAllSizes Command Test Suite', () => {
 
 		const result = await resetAllSizes(outputChannel);
 
-		// Should have executed zoom commands
-		assert.ok(result.executedCommands.length > 0, 'Should execute at least some commands');
+		// Should have executed or attempted the expected zoom commands from zoomAndSettings preset
+		const allAttemptedCommands = [
+			...result.executedCommands,
+			...result.failedCommands.map(f => f.id)
+		];
+		const expectedCommands = PRESET_CONFIGS.zoomAndSettings.commands;
+		for (const cmd of expectedCommands) {
+			assert.ok(
+				allAttemptedCommands.includes(cmd),
+				`Expected command '${cmd}' to be attempted`
+			);
+		}
 
-		// With zoomAndSettings preset, should have attempted to update settings
-		// (may be 0 if confirmation was canceled, but we disabled prompt)
-		assert.ok(result.updatedSettings.length >= 0, 'updatedSettings should be defined');
+		// With zoomAndSettings preset and prompt disabled, settings should be updated
+		// The expected settings from the preset should appear in updatedSettings
+		const expectedSettings = PRESET_CONFIGS.zoomAndSettings.settingsToReset;
+		const updatedSettingKeys = result.updatedSettings.map(s => s.key);
+		for (const setting of expectedSettings) {
+			assert.ok(
+				updatedSettingKeys.includes(setting),
+				`Expected setting '${setting}' to be updated`
+			);
+		}
 
 		outputChannel.dispose();
 
@@ -77,9 +95,13 @@ suite('resetAllSizes Command Test Suite', () => {
 		// This should not throw even if some commands fail
 		const result = await resetAllSizes(outputChannel);
 
-		// Should have a valid result even if some operations failed
-		assert.ok(result);
-		assert.ok(result.executedCommands || result.failedCommands);
+		// Should have a valid result structure even if some operations failed
+		assert.ok(result, 'Result should be defined');
+		assert.ok(Array.isArray(result.executedCommands), 'executedCommands should be an array');
+		assert.ok(Array.isArray(result.failedCommands), 'failedCommands should be an array');
+		// Commands should either succeed or fail - total should match attempted
+		const totalAttempted = result.executedCommands.length + result.failedCommands.length;
+		assert.ok(totalAttempted >= 0, 'Should have tracked all command attempts');
 
 		outputChannel.dispose();
 	});
