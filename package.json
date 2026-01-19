@@ -2,8 +2,8 @@
   "name": "reset-sizes-extension",
   "displayName": "Reset Sizes",
   "description": "Reset all size-related changes (UI zoom, editor font zoom, terminal font zoom, and optionally size-related settings) back to defaults.",
-  "version": "1.0.0",
-  "publisher": "stavarengo",
+  "version": "1.0.2",
+  "publisher": "unstunned",
   "repository": {
     "type": "git",
     "url": "https://github.com/stavarengo/vscode-reset-ui-sizes-extension"
@@ -38,7 +38,11 @@
       "properties": {
         "resetSizes.preset": {
           "type": "string",
-          "enum": ["zoom", "zoomAndSettings", "custom"],
+          "enum": [
+            "zoom",
+            "zoomAndSettings",
+            "custom"
+          ],
           "default": "zoom",
           "description": "Preset configuration: 'zoom' resets only zoom commands, 'zoomAndSettings' also removes size settings. Select 'custom' to define your own commands and settings.",
           "enumDescriptions": [
@@ -67,9 +71,15 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["user", "workspace", "workspaceFolder"]
+            "enum": [
+              "user",
+              "workspace",
+              "workspaceFolder"
+            ]
           },
-          "default": ["workspace"],
+          "default": [
+            "workspace"
+          ],
           "description": "Configuration scopes to apply settings reset (only used when settingsToReset is not empty)."
         },
         "resetSizes.promptBeforeReset": {
@@ -79,7 +89,11 @@
         },
         "resetSizes.reloadAfter": {
           "type": "string",
-          "enum": ["never", "prompt", "always"],
+          "enum": [
+            "never",
+            "prompt",
+            "always"
+          ],
           "default": "prompt",
           "description": "When to reload window after reset: never, prompt user, or always."
         },
@@ -99,7 +113,9 @@
     "test": "node ./dist/test/runTest.js",
     "lint": "eslint src --ext ts",
     "package": "vsce package --out extension.vsix",
-    "install-local": "npm run compile && npm run package && code --install-extension extension.vsix --force"
+    "install-local": "npm run compile && npm run package && code --install-extension extension.vsix --force",
+    "bump": "node ./scripts/bump-version.js",
+    "publish": "node ./scripts/publish.js"
   },
   "devDependencies": {
     "@types/node": "^18.x",
